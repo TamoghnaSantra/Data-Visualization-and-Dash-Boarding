@@ -1,0 +1,128 @@
+---
+title: "Week 3 Peer Review"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+
+######DO NOT MODIFY. This will load required packages and data.
+
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+
+cces <- drop_na(read_csv(url("https://www.dropbox.com/s/ahmt12y39unicd2/cces_sample_coursera.csv?raw=1")))
+
+cel <- drop_na(read_csv(url("https://www.dropbox.com/s/4ebgnkdhhxo5rac/cel_volden_wiseman%20_coursera.csv?raw=1")))
+
+```
+
+Following the directions on the Coursera assignment page, you will make four original visualizations. Note that the data for the CCES and CEL data are imported in code in the R Markdown file.
+
+### Put your name here: Tamoghna Santra
+
+## Exercise 1
+
+Explain what you are visualizing here:
+
+This is a Scatter Plot representing,
+
+Percentage of votes (votepct) in x-axis.
+Number if bills transformed into law (all_law) in y-axis
+The graph is facetted into different each congress which changes every 2 years
+The ratio of the gender representing the congress each time is also represented by the 2 given colours
+
+This analysis shows how the number of bills transformed into law has occured in different congresses with the informations of their sex ratio of representatives and vote percentages the MC won in the elections.
+
+Put your figure here:
+
+```{r exercise1,echo=FALSE}
+
+####PUT YOUR CODE HERE
+
+Gender <- recode(cel$female, '0' = "Male", '1' = "Female")
+ggplot(cel, aes(x=votepct, y=all_law, colour=Gender))+
+  geom_point()+
+  labs(x="Percent of the vote", y = "Number of Bills", title="Vote percentage and number of law made by each congress with its sex ratio")+
+  theme(plot.background = element_rect(colour = "light blue", size = 2))+
+  facet_wrap(~congress)
+  
+```
+
+## Exercise 2
+
+Explain what you are visualizing here:
+
+This is a Bar Plot representing,
+
+Number of representatives in x-axis.
+Education Standard in y-axis
+The graph is showing the different set of representatives in different colour in the bar plot which represents how diverse are the students in different standards of education
+
+Put your figure here:
+
+```{r exercise2,echo=FALSE}
+
+####PUT YOUR CODE HERE
+
+Race <- recode(cces$race, '1' = "White", '2' = "Black",'3' = "Hispanic", '4' = "Asian", '5' = "Native American", '6' = "Mixed", '7' = "Other", '8' = "Middle Eastern")
+education <- recode(cces$educ, '1' = "No high school", '2' = "High school graduate",'3' = "Some college", '4' = "2-year", '5' = "4-year", '6' = "Post-grad")
+ggplot(cces, aes(x=education, fill=Race))+
+  geom_bar()+
+  labs(x="Education Standard", y = "Number of member of each representation", title="Representatives from each race in different standards of education")+
+  theme(plot.background = element_rect(colour = "light blue", size = 2))+
+  coord_flip()
+  
+```
+
+## Exercise 3
+
+Explain what you are visualizing here:
+
+This is a Box Plot representing,
+
+Vote Percentage in x-axis.
+Education Standard in y-axis
+The graph is showing the different set of representatives in different colour in the bar plot which represents how diverse are the students in different standards of education
+
+Put your figure here:
+
+```{r exercise3,echo=FALSE}
+
+####PUT YOUR CODE HERE
+
+Gender <- recode(cel$female, '0' = "Male", '1' = "Female")
+ggplot(cel, aes(x=Gender, y = votepct, colour=Gender))+
+  geom_boxplot()+
+  coord_flip()+
+  labs(x="Percent of the vote", y = "Gender", title="Vote percentage received by the two genders")+
+  theme(plot.background = element_rect(colour = "light blue", size = 2))
+```
+
+## Exercise 4
+
+Explain what you are visualizing here:
+
+This is a Line Plot representing,
+
+Vote Percentage in y-axis.
+Year in y-axis
+The graph is showing the vote percentage received by female and male representatives along the years. 
+The years for the line plot of females are annoted in the graph.
+
+Put your figure here:
+
+```{r exercise4,echo=FALSE}
+
+####PUT YOUR CODE HERE
+
+cel$female <- recode(cel$female, '0' = "Male", '1' = "Female")
+Data <- cel %>% 
+  group_by(female, year) %>%
+  summarize ('Vote_Percentage'=mean(votepct, na.rm=T))
+  ggplot(Data, aes(x=year, y = Vote_Percentage, group=female, colour=female))+
+  geom_line()+
+  geom_point()+
+  geom_text(data = filter(Data, female=="Female"), aes(label = year), nudge_y=0.5)+
+  labs(x="Year", y = "Vote Percentage", title = "Vote Percantage over the years among male and female")
+
+```
